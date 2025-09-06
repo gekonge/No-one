@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import ShellList from "@/components/shell-list";
 import ShellManager from "@/components/shell-manager";

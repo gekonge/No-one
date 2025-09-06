@@ -1,15 +1,4 @@
-"use client";
-
-import {
-  Activity,
-  Cable,
-  Calendar,
-  Folder,
-  Server,
-  Shield,
-  TrendingUp,
-  Users,
-} from "lucide-react";
+import { Activity, Cable, Calendar, Folder, TrendingUp } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router";
 import { Badge } from "@/components/ui/badge";

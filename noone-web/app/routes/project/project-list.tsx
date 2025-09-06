@@ -122,9 +122,7 @@ export default function ProjectList() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredAndPaginatedProjects.projects.map((project) => (
           <Link to={`/projects/${project.id}/shells`} key={project.id}>
-            <Card
-              className="hover:shadow-lg transition-shadow cursor-pointer"
-            >
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
               <CardHeader>
                 <CardTitle className="text-xl text-balance">
                   {project.name}
