@@ -29,9 +29,22 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+      "a11y": {
+        "noSvgWithoutTitle": "off",
+        "useButtonType": "off",
+        "useAltText": "off",
+        "useKeyWithClickEvents": "off",
+        "useSemanticElements": "off"
+      },
       "suspicious": {
         "noFallthroughSwitchClause": "off",
-        "noExplicitAny": "off"
+        "noExplicitAny": "off",
+        "noAssignInExpressions": "off",
+        "noArrayIndexKey": "off"
+      },
+      "style": {
+        "useImportType": "off",
+        "useSelfClosingElements": "off"
       }
     }
   },

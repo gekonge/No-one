@@ -5,32 +5,116 @@ const generateMockUsers = (): User[] => {
   const users: User[] = [];
   const permissions = [
     "user:read",
-    "user:write", 
+    "user:write",
     "user:delete",
     "role:read",
     "role:write",
     "role:delete",
     "permission:read",
     "permission:write",
-    "system:manage"
+    "system:manage",
   ];
 
   const chineseNames = [
-    "张三", "李四", "王五", "赵六", "钱七", "孙八", "周九", "吴十",
-    "郑十一", "王十二", "冯十三", "陈十四", "褚十五", "卫十六", "蒋十七", "沈十八",
-    "韩十九", "杨二十", "朱二一", "秦二二", "尤二三", "许二四", "何二五", "吕二六",
-    "施二七", "张二八", "孔二九", "曹三十", "严三一", "华三二", "金三三", "魏三四",
-    "陶三五", "姜三六", "戚三七", "谢三八", "邹三九", "喻四十", "柏四一", "水四二",
-    "窦四三", "章四四", "云四五", "苏四六", "潘四七", "葛四八", "奚四九", "范五十"
+    "张三",
+    "李四",
+    "王五",
+    "赵六",
+    "钱七",
+    "孙八",
+    "周九",
+    "吴十",
+    "郑十一",
+    "王十二",
+    "冯十三",
+    "陈十四",
+    "褚十五",
+    "卫十六",
+    "蒋十七",
+    "沈十八",
+    "韩十九",
+    "杨二十",
+    "朱二一",
+    "秦二二",
+    "尤二三",
+    "许二四",
+    "何二五",
+    "吕二六",
+    "施二七",
+    "张二八",
+    "孔二九",
+    "曹三十",
+    "严三一",
+    "华三二",
+    "金三三",
+    "魏三四",
+    "陶三五",
+    "姜三六",
+    "戚三七",
+    "谢三八",
+    "邹三九",
+    "喻四十",
+    "柏四一",
+    "水四二",
+    "窦四三",
+    "章四四",
+    "云四五",
+    "苏四六",
+    "潘四七",
+    "葛四八",
+    "奚四九",
+    "范五十",
   ];
 
   const englishNames = [
-    "Alice", "Bob", "Charlie", "David", "Eva", "Frank", "Grace", "Henry",
-    "Ivy", "Jack", "Kate", "Leo", "Mia", "Noah", "Olivia", "Paul",
-    "Quinn", "Ruby", "Sam", "Tina", "Uma", "Victor", "Wendy", "Xavier",
-    "Yara", "Zoe", "Adam", "Bella", "Chris", "Diana", "Eric", "Fiona",
-    "George", "Hannah", "Ian", "Julia", "Kevin", "Luna", "Mike", "Nina",
-    "Oscar", "Penny", "Quincy", "Rachel", "Steve", "Tara", "Ulysses", "Vera"
+    "Alice",
+    "Bob",
+    "Charlie",
+    "David",
+    "Eva",
+    "Frank",
+    "Grace",
+    "Henry",
+    "Ivy",
+    "Jack",
+    "Kate",
+    "Leo",
+    "Mia",
+    "Noah",
+    "Olivia",
+    "Paul",
+    "Quinn",
+    "Ruby",
+    "Sam",
+    "Tina",
+    "Uma",
+    "Victor",
+    "Wendy",
+    "Xavier",
+    "Yara",
+    "Zoe",
+    "Adam",
+    "Bella",
+    "Chris",
+    "Diana",
+    "Eric",
+    "Fiona",
+    "George",
+    "Hannah",
+    "Ian",
+    "Julia",
+    "Kevin",
+    "Luna",
+    "Mike",
+    "Nina",
+    "Oscar",
+    "Penny",
+    "Quincy",
+    "Rachel",
+    "Steve",
+    "Tara",
+    "Ulysses",
+    "Vera",
   ];
 
   for (let i = 1; i <= 50; i++) {
@@ -39,7 +123,7 @@ const generateMockUsers = (): User[] => {
     const name = isChinese ? chineseNames[nameIndex] : englishNames[nameIndex];
     const username = isChinese ? `user${i}` : name.toLowerCase();
     const email = `${username}@company.com`;
-    
+
     // 随机分配角色
     const userRoles = [];
     if (i === 1) {
@@ -65,7 +149,12 @@ const generateMockUsers = (): User[] => {
     } else if (userRoles.includes("USER_MANAGER")) {
       userPermissions.push("user:read", "user:write", "role:read");
     } else if (userRoles.includes("ROLE_MANAGER")) {
-      userPermissions.push("role:read", "role:write", "permission:read", "permission:write");
+      userPermissions.push(
+        "role:read",
+        "role:write",
+        "permission:read",
+        "permission:write",
+      );
     } else if (userRoles.includes("MANAGER")) {
       userPermissions.push("user:read", "role:read");
     } else if (userRoles.includes("USER")) {
@@ -76,13 +165,13 @@ const generateMockUsers = (): User[] => {
 
     // 随机状态，但确保大部分是active
     const status = Math.random() > 0.2 ? "active" : "inactive";
-    
+
     // 生成创建时间（过去6个月内）
     const createdAt = new Date();
     createdAt.setDate(createdAt.getDate() - Math.floor(Math.random() * 180));
     createdAt.setHours(Math.floor(Math.random() * 24));
     createdAt.setMinutes(Math.floor(Math.random() * 60));
-    
+
     // 生成最后登录时间（创建时间之后）
     const lastLogin = new Date(createdAt);
     lastLogin.setDate(lastLogin.getDate() + Math.floor(Math.random() * 30));
@@ -108,7 +197,9 @@ const generateMockUsers = (): User[] => {
 const mockUsers: User[] = generateMockUsers();
 
 export async function getUsers(
-  filters: Awaited<ReturnType<typeof import("@/lib/user-sreach-param").loadUserSearchParams>> = {
+  filters: Awaited<
+    ReturnType<typeof import("@/lib/user-sreach-param").loadUserSearchParams>
+  > = {
     name: "",
     status: "",
     roles: [],
@@ -132,10 +223,9 @@ export async function getUsers(
   let filteredUsers = [...mockUsers];
   if (name) {
     const searchLower = name.toLowerCase();
-    filteredUsers = filteredUsers.filter(
-      (user) =>
-        user.name.toLowerCase().includes(searchLower),
-    );  
+    filteredUsers = filteredUsers.filter((user) =>
+      user.name.toLowerCase().includes(searchLower),
+    );
   }
 
   if (status) {

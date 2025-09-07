@@ -1,4 +1,5 @@
 import { Separator } from "@radix-ui/react-separator";
+import { NuqsAdapter } from "nuqs/adapters/react-router/v7";
 import { Link, Outlet, useParams } from "react-router";
 import { Toaster } from "sonner";
 import { AppSidebar } from "@/components/app-sidebar";
@@ -18,7 +19,6 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { useBreadcrumbs } from "@/lib/breadcrumb-utils";
-import { NuqsAdapter } from "nuqs/adapters/react-router/v7";
 
 // 模拟项目数据
 const mockProjects = {

@@ -1,18 +1,17 @@
 import { Download, Plus } from "lucide-react";
+import React, { use } from "react";
 import type { LoaderFunctionArgs } from "react-router";
 import { useLoaderData } from "react-router";
 import { DataTable } from "@/components/data-table/data-table";
+import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
 import { Button } from "@/components/ui/button";
 import { UsersTableActionBar } from "@/components/user-action-bar";
 import { userColumns } from "@/components/user-columns";
 import { useDataTable } from "@/hooks/use-data-table";
 import { getUsers } from "@/lib/user-api";
-import type { UserResponse } from "@/types/user";
-import { use } from "react";
-import React from "react";
-import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
 import { loadUserSearchParams } from "@/lib/user-sreach-param";
+import type { UserResponse } from "@/types/user";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const params = await loadUserSearchParams(request);

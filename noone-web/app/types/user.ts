@@ -10,7 +10,6 @@ export interface User {
   lastLogin?: string;
 }
 
-
 export interface UserResponse {
   data: User[];
   total: number;
