@@ -29,39 +29,42 @@ export function DataTable<TData>({
   const navigation = useNavigation();
   const isLoading = navigation.state === "loading";
   return (
-    <div
-      className={cn("flex w-full flex-col gap-2.5 overflow-auto", className)}
-      {...props}
-    >
+    <div className={cn("flex w-full flex-col gap-2.5", className)} {...props}>
       {children}
-      <div className="overflow-hidden rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead
-                    key={header.id}
-                    colSpan={header.colSpan}
-                    style={{
-                      ...getCommonPinningStyles({ column: header.column }),
-                    }}
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          {isLoading ? (
-            <TableBody>
-              {Array.from({ length: table.getState().pagination.pageSize }).map(
-                (_, i) => (
+      <div className="flex flex-col overflow-hidden rounded-md border">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead
+                      key={header.id}
+                      colSpan={header.colSpan}
+                      style={{
+                        ...getCommonPinningStyles({ column: header.column }),
+                      }}
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+          </Table>
+        </div>
+        <div className="max-h-[calc(100vh-26rem)] overflow-y-auto">
+          <Table>
+            {isLoading ? (
+              <TableBody>
+                {Array.from({
+                  length: table.getState().pagination.pageSize,
+                }).map((_, i) => (
                   <TableRow key={i} className="hover:bg-transparent">
                     {Array.from({
                       length: table.getAllColumns().length,
@@ -77,47 +80,47 @@ export function DataTable<TData>({
                       </TableCell>
                     ))}
                   </TableRow>
-                ),
-              )}
-            </TableBody>
-          ) : (
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell
-                        key={cell.id}
-                        style={{
-                          ...getCommonPinningStyles({
-                            column: cell.column,
-                          }),
-                        }}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
-                    ))}
+                ))}
+              </TableBody>
+            ) : (
+              <TableBody>
+                {table.getRowModel().rows?.length ? (
+                  table.getRowModel().rows.map((row) => (
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && "selected"}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell
+                          key={cell.id}
+                          style={{
+                            ...getCommonPinningStyles({
+                              column: cell.column,
+                            }),
+                          }}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={table.getAllColumns().length}
+                      className="h-24 text-center"
+                    >
+                      No results.
+                    </TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={table.getAllColumns().length}
-                    className="h-24 text-center"
-                  >
-                    No results.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          )}
-        </Table>
+                )}
+              </TableBody>
+            )}
+          </Table>
+        </div>
       </div>
       <div className="flex flex-col gap-2.5">
         <DataTablePagination table={table} />

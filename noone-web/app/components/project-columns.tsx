@@ -3,10 +3,10 @@ import {
   CalendarIcon,
   Edit,
   MoreHorizontal,
-  Text,
+  Server,
+  Terminal,
   Trash2,
-  UserCheck,
-  UserX,
+  User,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,11 +19,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { formatDate } from "@/lib/format";
-import type { User } from "@/types/user";
+import type { Project } from "@/types/project";
 import { DataTableColumnHeader } from "./data-table/data-table-column-header";
+import { formatDate } from "@/lib/format";
+import { useNavigate } from "react-router";
 
-export const userColumns: ColumnDef<User>[] = [
+export const projectColumns: ColumnDef<Project>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -55,58 +56,42 @@ export const userColumns: ColumnDef<User>[] = [
     id: "name",
     accessorKey: "name",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="User" />
+      <DataTableColumnHeader column={column} title="Project" />
     ),
     cell: ({ row }) => {
-      const user = row.original;
+      const project = row.original;
       return (
-        <div className="flex items-center font-medium gap-1">
-          <div>{user.name}</div>
-          <div>{user.email}</div>
+        <div className="space-y-1">
+          <div className="font-medium">{project.name}</div>
         </div>
       );
     },
     meta: {
-      label: "User",
+      label: "Project",
       variant: "text",
-      placeholder: "Search by name...",
-      icon: Text,
+      placeholder: "Search by name or description...",
     },
     enableColumnFilter: true,
-    size: 250,
   },
   {
-    id: "roles",
-    accessorKey: "roles",
+    id: "creator",
+    accessorKey: "creator",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Role" />
+      <DataTableColumnHeader column={column} title="Creator" />
     ),
     cell: ({ row }) => {
-      const roles = row.getValue("roles") as string[];
+      const creator = row.getValue("creator") as string;
       return (
-        <div className="flex flex-wrap gap-1">
-          {roles.slice(0, 2).map((role) => (
-            <Badge key={role} variant="outline" className="text-xs">
-              {role}
-            </Badge>
-          ))}
-          {roles.length > 2 && (
-            <Badge variant="outline" className="text-xs">
-              +{roles.length - 2}
-            </Badge>
-          )}
+        <div className="flex items-center gap-2">
+          <User className="w-4 h-4 text-muted-foreground" />
+          <span className="text-sm">{creator}</span>
         </div>
       );
     },
     meta: {
-      label: "Role",
-      variant: "multiSelect",
-      options: [
-        { label: "ADMIN", value: "ADMIN" },
-        { label: "MANAGER", value: "MANAGER" },
-        { label: "USER", value: "USER" },
-        { label: "GUEST", value: "GUEST" },
-      ],
+      label: "Creator",
+      variant: "text",
+      placeholder: "Search by creator...",
     },
     enableColumnFilter: true,
   },
@@ -118,19 +103,22 @@ export const userColumns: ColumnDef<User>[] = [
     ),
     cell: ({ row }) => {
       const status = row.getValue("status") as string;
-      return status === "active" ? (
-        <Badge
-          variant="default"
-          className="bg-green-100 text-green-800 hover:bg-green-100"
-        >
-          Active
-        </Badge>
-      ) : (
-        <Badge
-          variant="secondary"
-          className="bg-red-100 text-red-800 hover:bg-red-100"
-        >
-          Inactive
+      const getStatusColor = (status: string) => {
+        switch (status) {
+          case "active":
+            return "bg-green-100 text-green-800 hover:bg-green-100";
+          case "inactive":
+            return "bg-yellow-100 text-yellow-800 hover:bg-yellow-100";
+          case "archived":
+            return "bg-gray-100 text-gray-800 hover:bg-gray-100";
+          default:
+            return "bg-gray-100 text-gray-800 hover:bg-gray-100";
+        }
+      };
+
+      return (
+        <Badge className={getStatusColor(status)}>
+          {status.charAt(0).toUpperCase() + status.slice(1)}
         </Badge>
       );
     },
@@ -140,21 +128,41 @@ export const userColumns: ColumnDef<User>[] = [
       options: [
         { label: "Active", value: "active" },
         { label: "Inactive", value: "inactive" },
+        { label: "Archived", value: "archived" },
       ],
     },
     enableColumnFilter: true,
   },
   {
-    id: "lastLogin",
-    accessorKey: "lastLogin",
+    id: "hostCount",
+    accessorKey: "hostCount",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Last Login" />
+      <DataTableColumnHeader column={column} title="Hosts" />
     ),
     cell: ({ row }) => {
-      const lastLogin = row.getValue("lastLogin") as string | undefined;
+      const hostCount = row.getValue("hostCount") as number;
       return (
-        <div className="w-20 text-sm">
-          {lastLogin ? formatDate(new Date(lastLogin)) : "Never logged in"}
+        <div className="flex items-center gap-2">
+          <Server className="w-4 h-4 text-muted-foreground" />
+          <span className="font-medium">{hostCount}</span>
+          <span className="text-sm text-muted-foreground">Hosts</span>
+        </div>
+      );
+    },
+  },
+  {
+    id: "shellCount",
+    accessorKey: "shellCount",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Shells" />
+    ),
+    cell: ({ row }) => {
+      const shellCount = row.getValue("shellCount") as number;
+      return (
+        <div className="flex items-center gap-2">
+          <Terminal className="w-4 h-4 text-muted-foreground" />
+          <span className="font-medium">{shellCount}</span>
+          <span className="text-sm text-muted-foreground">Shells</span>
         </div>
       );
     },
@@ -177,33 +185,28 @@ export const userColumns: ColumnDef<User>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const user = row.original;
-
-      const handleEditUser = () => {
-        // TODO: Implement edit user
-        console.log("Edit user:", user.id);
+      const project = row.original;
+      const navigate = useNavigate();
+      const handleEditProject = () => {
+        // TODO: Implement edit project
+        console.log("Edit project:", project.id);
       };
 
-      const handleDeleteUser = async () => {
+      const handleDeleteProject = async () => {
         if (
           !confirm(
-            "Are you sure you want to delete this user? This action cannot be undone.",
+            "Are you sure you want to delete this project? This action cannot be undone.",
           )
         )
           return;
-        // TODO: Implement delete user
-        console.log("Delete user:", user.id);
+        // TODO: Implement delete project
+        console.log("Delete project:", project.id);
       };
 
-      const handleToggleUserStatus = async () => {
-        if (
-          !confirm(
-            `Are you sure you want to ${user.status === "active" ? "disable" : "enable"} this user?`,
-          )
-        )
-          return;
-        // TODO: Implement toggle user status
-        console.log("Toggle user status:", user.id, user.status);
+      const handleViewShells = () => {
+        // TODO: Navigate to shells page
+        console.log("View shells for project:", project.id);
+        navigate(`/shells?projectId=${project.id}`);
       };
 
       return (
@@ -216,26 +219,17 @@ export const userColumns: ColumnDef<User>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={handleEditUser}>
+            <DropdownMenuItem onClick={handleEditProject}>
               <Edit className="mr-2 h-4 w-4" />
               Edit
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleToggleUserStatus}>
-              {user.status === "active" ? (
-                <>
-                  <UserX className="mr-2 h-4 w-4" />
-                  Disable
-                </>
-              ) : (
-                <>
-                  <UserCheck className="mr-2 h-4 w-4" />
-                  Enable
-                </>
-              )}
+            <DropdownMenuItem onClick={handleViewShells}>
+              <Terminal className="mr-2 h-4 w-4" />
+              View Shells
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onClick={handleDeleteUser}
+              onClick={handleDeleteProject}
               className="text-destructive"
             >
               <Trash2 className="mr-2 h-4 w-4" />

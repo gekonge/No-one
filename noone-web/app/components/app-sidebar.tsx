@@ -147,10 +147,17 @@ export function AppSidebar({ projectName }: AppSidebarProps) {
                     asChild
                     isActive={location.pathname === item.url}
                   >
-                    <NavLink to={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </NavLink>
+                    {location.pathname === item.url ? (
+                      <div className="flex items-center gap-2">
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </div>
+                    ) : (
+                      <NavLink to={item.url}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </NavLink>
+                    )}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -168,10 +175,17 @@ export function AppSidebar({ projectName }: AppSidebarProps) {
                       asChild
                       isActive={location.pathname === "/projects"}
                     >
-                      <NavLink to="/projects">
-                        <ArrowLeft />
-                        <span>Back to Projects</span>
-                      </NavLink>
+                      {location.pathname === "/projects" ? (
+                        <div className="flex items-center gap-2">
+                          <ArrowLeft />
+                          <span>Back to Projects</span>
+                        </div>
+                      ) : (
+                        <NavLink to="/projects">
+                          <ArrowLeft />
+                          <span>Back to Projects</span>
+                        </NavLink>
+                      )}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 </SidebarMenu>
@@ -190,10 +204,17 @@ export function AppSidebar({ projectName }: AppSidebarProps) {
                         asChild
                         isActive={location.pathname === item.url}
                       >
-                        <NavLink to={item.url}>
-                          <item.icon />
-                          <span>{item.title}</span>
-                        </NavLink>
+                        {location.pathname === item.url ? (
+                          <div className="flex items-center gap-2">
+                            <item.icon />
+                            <span>{item.title}</span>
+                          </div>
+                        ) : (
+                          <NavLink to={item.url}>
+                            <item.icon />
+                            <span>{item.title}</span>
+                          </NavLink>
+                        )}
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
@@ -214,10 +235,17 @@ export function AppSidebar({ projectName }: AppSidebarProps) {
                     asChild
                     isActive={location.pathname === "/projects"}
                   >
-                    <NavLink to="/projects">
-                      <Folder />
-                      <span>Projects</span>
-                    </NavLink>
+                    {location.pathname === "/projects" ? (
+                      <div className="flex items-center gap-2">
+                        <Folder />
+                        <span>Projects</span>
+                      </div>
+                    ) : (
+                      <NavLink to="/projects">
+                        <Folder />
+                        <span>Projects</span>
+                      </NavLink>
+                    )}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               )}
@@ -228,10 +256,17 @@ export function AppSidebar({ projectName }: AppSidebarProps) {
                     asChild
                     isActive={location.pathname === "/shells"}
                   >
-                    <NavLink to="/shells">
-                      <Cable />
-                      <span>Shells</span>
-                    </NavLink>
+                    {location.pathname === "/shells" ? (
+                      <div className="flex items-center gap-2">
+                        <Cable />
+                        <span>Shells</span>
+                      </div>
+                    ) : (
+                      <NavLink to="/shells">
+                        <Cable />
+                        <span>Shells</span>
+                      </NavLink>
+                    )}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               )}
@@ -242,10 +277,17 @@ export function AppSidebar({ projectName }: AppSidebarProps) {
                     asChild
                     isActive={location.pathname === item.url}
                   >
-                    <NavLink to={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </NavLink>
+                    {location.pathname === item.url ? (
+                      <div className="flex items-center gap-2">
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </div>
+                    ) : (
+                      <NavLink to={item.url}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </NavLink>
+                    )}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

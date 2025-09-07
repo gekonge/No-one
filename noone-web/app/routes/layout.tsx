@@ -88,7 +88,7 @@ export default function Layout() {
             </Button>
           </nav>
         </header>
-        <main>
+        <main className="flex-1 overflow-auto">
           <NuqsAdapter>
             <Outlet />
           </NuqsAdapter>
