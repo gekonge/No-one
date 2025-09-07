@@ -4,11 +4,14 @@ import {
   Command,
   Folder,
   Home,
+  Key,
   PlugZap2,
   Settings,
   Shield,
   Sparkles,
   Sprout,
+  UserCheck,
+  Users,
 } from "lucide-react";
 import { NavLink, useLocation, useParams } from "react-router";
 import {
@@ -31,6 +34,24 @@ const user = {
   avatar:
     "https://cdn.jsdelivr.net/gh/ReaJason/blog_imgs/default/blog_avatar.jpg",
 };
+
+const adminItems = [
+  {
+    title: "Users",
+    url: "/admin/users",
+    icon: Users,
+  },
+  {
+    title: "Roles",
+    url: "/admin/roles",
+    icon: UserCheck,
+  },
+  {
+    title: "Permissions",
+    url: "/admin/permissions",
+    icon: Key,
+  },
+];
 
 const globalItems = [
   {
@@ -116,6 +137,27 @@ export function AppSidebar({ projectName }: AppSidebarProps) {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Admin</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {adminItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={location.pathname === item.url}
+                  >
+                    <NavLink to={item.url}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
         {projectId && (
           <>
             <SidebarGroup>

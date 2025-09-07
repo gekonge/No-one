@@ -1,7 +1,8 @@
 import { Separator } from "@radix-ui/react-separator";
-import { Outlet, useLocation, useParams } from "react-router";
+import { Link, Outlet, useParams } from "react-router";
 import { Toaster } from "sonner";
 import { AppSidebar } from "@/components/app-sidebar";
+import { Icons } from "@/components/icons";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,11 +11,14 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { useBreadcrumbs } from "@/lib/breadcrumb-utils";
+import { NuqsAdapter } from "nuqs/adapters/react-router/v7";
 
 // 模拟项目数据
 const mockProjects = {
@@ -26,52 +30,18 @@ const mockProjects = {
 
 export default function Layout() {
   const params = useParams();
-  const location = useLocation();
   const projectId = params.projectId;
   const projectName = projectId
     ? mockProjects[projectId as keyof typeof mockProjects]?.name
     : undefined;
 
-  const generateBreadcrumbs = () => {
-    const pathSegments = location.pathname.split("/").filter(Boolean);
-    const breadcrumbs = [];
-
-    if (pathSegments.length === 0) {
-      return [{ label: "Home", href: "/" }];
-    }
-
-    if (pathSegments[0] === "projects") {
-      if (pathSegments.length === 1) {
-        breadcrumbs.push({ label: "Projects", href: "/projects" });
-      } else if (pathSegments.length >= 2) {
-        breadcrumbs.push({ label: "Projects", href: "/projects" });
-        if (projectName) {
-          breadcrumbs.push({
-            label: projectName,
-            href: `/projects/${projectId}`,
-          });
-        }
-        if (pathSegments[2] === "shells") {
-          breadcrumbs.push({
-            label: "Shell Connections",
-            href: `/projects/${projectId}/shells`,
-          });
-        }
-      }
-    } else if (pathSegments[0] === "shells") {
-      breadcrumbs.push({ label: "All Shell Connections", href: "/shells" });
-    }
-
-    return breadcrumbs;
-  };
-
-  const breadcrumbs = generateBreadcrumbs();
+  const breadcrumbs = useBreadcrumbs();
 
   return (
     <SidebarProvider>
       <AppSidebar projectName={projectName} />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2">
+        <header className="flex h-16 shrink-0 items-center justify-between gap-2">
           <div className="flex items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
             <Separator
@@ -81,8 +51,8 @@ export default function Layout() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    No one WebShell Manager
+                  <BreadcrumbLink asChild>
+                    <Link to="/">No one WebShell Manager</Link>
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
@@ -95,8 +65,8 @@ export default function Layout() {
                       {index === breadcrumbs.length - 1 ? (
                         <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
                       ) : (
-                        <BreadcrumbLink href={crumb.href}>
-                          {crumb.label}
+                        <BreadcrumbLink asChild>
+                          <Link to={crumb.href}>{crumb.label}</Link>
                         </BreadcrumbLink>
                       )}
                     </BreadcrumbItem>
@@ -105,9 +75,23 @@ export default function Layout() {
               </BreadcrumbList>
             </Breadcrumb>
           </div>
+          <nav className="flex flex-1 items-center md:justify-end pr-4">
+            <Button variant="ghost" size="icon" className="size-8" asChild>
+              <Link
+                aria-label="GitHub repo"
+                to="https://github.com/ReaJason/No-one"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Icons.gitHub className="size-4" aria-hidden="true" />
+              </Link>
+            </Button>
+          </nav>
         </header>
         <main>
-          <Outlet />
+          <NuqsAdapter>
+            <Outlet />
+          </NuqsAdapter>
         </main>
         <Toaster />
       </SidebarInset>

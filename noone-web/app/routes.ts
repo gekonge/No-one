@@ -15,6 +15,11 @@ export default [
     route("/plugins", "routes/plugins.tsx"),
     route("/settings", "routes/settings.tsx"),
     route("/audit", "routes/audit.tsx"),
+    ...prefix("admin", [
+      route("/users", "routes/admin/users.tsx"),
+      route("/roles", "routes/admin/roles.tsx"),
+      route("/permissions", "routes/admin/permissions.tsx"),
+    ]),
     ...prefix("projects", [
       index("routes/project/project-list.tsx"),
       route("/create", "routes/project/create-project.tsx"),
