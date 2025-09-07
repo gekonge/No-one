@@ -1,7 +1,7 @@
 import { createLoader, parseAsArrayOf, parseAsInteger, parseAsString } from 'nuqs/server'
 
 export const userSearchParams = {
-  search: parseAsString.withDefault(''),
+  name: parseAsString.withDefault(''),
   status: parseAsString.withDefault(''),
   roles: parseAsArrayOf(parseAsString).withDefault([]),
   page: parseAsInteger.withDefault(1),

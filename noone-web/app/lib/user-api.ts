@@ -109,7 +109,7 @@ const mockUsers: User[] = generateMockUsers();
 
 export async function getUsers(
   filters: Awaited<ReturnType<typeof import("@/lib/user-sreach-param").loadUserSearchParams>> = {
-    search: "",
+    name: "",
     status: "",
     roles: [],
     page: 1,
@@ -120,7 +120,7 @@ export async function getUsers(
 ): Promise<UserResponse> {
   await new Promise((resolve) => setTimeout(resolve, 500));
   const {
-    search = "",
+    name = "",
     status,
     roles = [],
     page = 1,
@@ -130,13 +130,11 @@ export async function getUsers(
   } = filters;
 
   let filteredUsers = [...mockUsers];
-  if (search !== undefined) {
-    const searchLower = search.toLowerCase();
+  if (name) {
+    const searchLower = name.toLowerCase();
     filteredUsers = filteredUsers.filter(
       (user) =>
-        user.name.toLowerCase().includes(searchLower) ||
-        user.email.toLowerCase().includes(searchLower) ||
-        user.username.toLowerCase().includes(searchLower),
+        user.name.toLowerCase().includes(searchLower),
     );  
   }
 
