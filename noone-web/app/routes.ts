@@ -24,7 +24,7 @@ export default [
     ]),
     ...prefix("projects", [
       index("routes/project/project-list.tsx"),
-      route("/create", "routes/project/create-project.tsx")
+      route("/create", "routes/project/create-project.tsx"),
     ]),
   ]),
 ] satisfies RouteConfig;

@@ -1,5 +1,5 @@
-import ShellManager from "@/components/shell-manager";
 import { useState } from "react";
+import ShellManager from "@/components/shell-manager";
 
 interface ShellConnection {
   id: string;

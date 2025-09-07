@@ -8,6 +8,7 @@ import {
   Trash2,
   User,
 } from "lucide-react";
+import { useNavigate } from "react-router";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -19,10 +20,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { formatDate } from "@/lib/format";
 import type { Project } from "@/types/project";
 import { DataTableColumnHeader } from "./data-table/data-table-column-header";
-import { formatDate } from "@/lib/format";
-import { useNavigate } from "react-router";
 
 export const projectColumns: ColumnDef<Project>[] = [
   {

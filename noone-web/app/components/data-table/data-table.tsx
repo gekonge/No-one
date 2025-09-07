@@ -1,6 +1,5 @@
 import { flexRender, type Table as TanstackTable } from "@tanstack/react-table";
 import type * as React from "react";
-import { useNavigation } from "react-router";
 import { DataTablePagination } from "@/components/data-table/data-table-pagination";
 import {
   Table,
@@ -12,7 +11,6 @@ import {
 } from "@/components/ui/table";
 import { getCommonPinningStyles } from "@/lib/data-table";
 import { cn } from "@/lib/utils";
-import { Skeleton } from "../ui/skeleton";
 
 interface DataTableProps<TData> extends React.ComponentProps<"div"> {
   table: TanstackTable<TData>;
@@ -26,8 +24,6 @@ export function DataTable<TData>({
   className,
   ...props
 }: DataTableProps<TData>) {
-  const navigation = useNavigation();
-  const isLoading = navigation.state === "loading";
   return (
     <div className={cn("flex w-full flex-col gap-2.5", className)} {...props}>
       {children}
@@ -60,65 +56,41 @@ export function DataTable<TData>({
         </div>
         <div className="max-h-[calc(100vh-26rem)] overflow-y-auto">
           <Table>
-            {isLoading ? (
-              <TableBody>
-                {Array.from({
-                  length: table.getState().pagination.pageSize,
-                }).map((_, i) => (
-                  <TableRow key={i} className="hover:bg-transparent">
-                    {Array.from({
-                      length: table.getAllColumns().length,
-                    }).map((_, j) => (
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
+                    {row.getVisibleCells().map((cell) => (
                       <TableCell
-                        key={j}
+                        key={cell.id}
                         style={{
-                          width: table.getAllColumns()[j].getSize(),
-                          minWidth: table.getAllColumns()[j].getSize(),
+                          ...getCommonPinningStyles({
+                            column: cell.column,
+                          }),
                         }}
                       >
-                        <Skeleton className="h-6 w-full" />
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
-                ))}
-              </TableBody>
-            ) : (
-              <TableBody>
-                {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow
-                      key={row.id}
-                      data-state={row.getIsSelected() && "selected"}
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell
-                          key={cell.id}
-                          style={{
-                            ...getCommonPinningStyles({
-                              column: cell.column,
-                            }),
-                          }}
-                        >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={table.getAllColumns().length}
-                      className="h-24 text-center"
-                    >
-                      No results.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            )}
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={table.getAllColumns().length}
+                    className="h-24 text-center"
+                  >
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
           </Table>
         </div>
       </div>
