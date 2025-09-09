@@ -5,6 +5,7 @@ import {
   Folder,
   Home,
   Key,
+  Loader,
   PlugZap2,
   Settings,
   Shield,
@@ -35,7 +36,49 @@ const user = {
     "https://cdn.jsdelivr.net/gh/ReaJason/blog_imgs/default/blog_avatar.jpg",
 };
 
-const adminItems = [
+interface NavItem {
+  title: string;
+  url: string;
+  icon: React.ComponentType<{ className?: string }>;
+  condition?: () => boolean;
+}
+
+interface NavItemRendererProps {
+  item: NavItem;
+  location: ReturnType<typeof useLocation>;
+}
+
+function NavItemRenderer({ item, location }: NavItemRendererProps) {
+  const isActive = location.pathname === item.url;
+
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton asChild isActive={isActive}>
+        {isActive ? (
+          <div className="flex items-center gap-2">
+            <item.icon />
+            <span>{item.title}</span>
+          </div>
+        ) : (
+          <NavLink to={item.url} viewTransition>
+            {({ isPending }) => (
+              <>
+                {isPending ? (
+                  <Loader className="animate-spin" />
+                ) : (
+                  <item.icon />
+                )}
+                <span>{item.title}</span>
+              </>
+            )}
+          </NavLink>
+        )}
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+}
+
+const adminItems: NavItem[] = [
   {
     title: "Users",
     url: "/admin/users",
@@ -53,7 +96,7 @@ const adminItems = [
   },
 ];
 
-const globalItems = [
+const globalItems: NavItem[] = [
   {
     title: "Generator",
     url: `/generator`,
@@ -90,7 +133,13 @@ export function AppSidebar({ projectName }: AppSidebarProps) {
   const location = useLocation();
   const projectId = params.projectId;
 
-  const projectItems = projectId
+  const dashboardItem: NavItem = {
+    title: "Dashboard",
+    url: "/",
+    icon: Home,
+  };
+
+  const projectItems: NavItem[] = projectId
     ? [
         {
           title: "Shells",
@@ -99,6 +148,27 @@ export function AppSidebar({ projectName }: AppSidebarProps) {
         },
       ]
     : [];
+
+  const backToProjectsItem: NavItem = {
+    title: "Back to Projects",
+    url: "/projects",
+    icon: ArrowLeft,
+    condition: () => !!projectId,
+  };
+
+  const projectsItem: NavItem = {
+    title: "Projects",
+    url: "/projects",
+    icon: Folder,
+    condition: () => !projectId,
+  };
+
+  const shellsItem: NavItem = {
+    title: "Shells",
+    url: "/shells",
+    icon: Cable,
+    condition: () => !projectId,
+  };
 
   return (
     <Sidebar variant="inset">
@@ -126,14 +196,7 @@ export function AppSidebar({ projectName }: AppSidebarProps) {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={location.pathname === "/"}>
-                  <NavLink to="/">
-                    <Home />
-                    <span>Dashboard</span>
-                  </NavLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              <NavItemRenderer item={dashboardItem} location={location} />
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -142,24 +205,11 @@ export function AppSidebar({ projectName }: AppSidebarProps) {
           <SidebarGroupContent>
             <SidebarMenu>
               {adminItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={location.pathname === item.url}
-                  >
-                    {location.pathname === item.url ? (
-                      <div className="flex items-center gap-2">
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </div>
-                    ) : (
-                      <NavLink to={item.url}>
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </NavLink>
-                    )}
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+                <NavItemRenderer
+                  key={item.title}
+                  item={item}
+                  location={location}
+                />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
@@ -170,24 +220,10 @@ export function AppSidebar({ projectName }: AppSidebarProps) {
             <SidebarGroup>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={location.pathname === "/projects"}
-                    >
-                      {location.pathname === "/projects" ? (
-                        <div className="flex items-center gap-2">
-                          <ArrowLeft />
-                          <span>Back to Projects</span>
-                        </div>
-                      ) : (
-                        <NavLink to="/projects">
-                          <ArrowLeft />
-                          <span>Back to Projects</span>
-                        </NavLink>
-                      )}
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                  <NavItemRenderer
+                    item={backToProjectsItem}
+                    location={location}
+                  />
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
@@ -199,97 +235,36 @@ export function AppSidebar({ projectName }: AppSidebarProps) {
               <SidebarGroupContent>
                 <SidebarMenu>
                   {projectItems.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton
-                        asChild
-                        isActive={location.pathname === item.url}
-                      >
-                        {location.pathname === item.url ? (
-                          <div className="flex items-center gap-2">
-                            <item.icon />
-                            <span>{item.title}</span>
-                          </div>
-                        ) : (
-                          <NavLink to={item.url}>
-                            <item.icon />
-                            <span>{item.title}</span>
-                          </NavLink>
-                        )}
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
+                    <NavItemRenderer
+                      key={item.title}
+                      item={item}
+                      location={location}
+                    />
                   ))}
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
           </>
         )}
-
-        {/* 全局导航 */}
         <SidebarGroup>
           <SidebarGroupLabel>Global</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {!projectId && (
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={location.pathname === "/projects"}
-                  >
-                    {location.pathname === "/projects" ? (
-                      <div className="flex items-center gap-2">
-                        <Folder />
-                        <span>Projects</span>
-                      </div>
-                    ) : (
-                      <NavLink to="/projects">
-                        <Folder />
-                        <span>Projects</span>
-                      </NavLink>
-                    )}
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+              {[projectsItem, shellsItem].map((item) =>
+                item.condition?.() ? (
+                  <NavItemRenderer
+                    key={item.title}
+                    item={item}
+                    location={location}
+                  />
+                ) : null,
               )}
-
-              {!projectId && (
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={location.pathname === "/shells"}
-                  >
-                    {location.pathname === "/shells" ? (
-                      <div className="flex items-center gap-2">
-                        <Cable />
-                        <span>Shells</span>
-                      </div>
-                    ) : (
-                      <NavLink to="/shells">
-                        <Cable />
-                        <span>Shells</span>
-                      </NavLink>
-                    )}
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              )}
-
               {globalItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={location.pathname === item.url}
-                  >
-                    {location.pathname === item.url ? (
-                      <div className="flex items-center gap-2">
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </div>
-                    ) : (
-                      <NavLink to={item.url}>
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </NavLink>
-                    )}
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+                <NavItemRenderer
+                  key={item.title}
+                  item={item}
+                  location={location}
+                />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
