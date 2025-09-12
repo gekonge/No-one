@@ -66,7 +66,7 @@ AI 智能的不断提升，慢慢加入到了安全漏洞辅助研判中来，�
 5. DNS LookUp
 6. JarLoader
 7. ShellCodeLoader
-8. HashDump（提取有用数据）
+8. HeapDump（提取有用数据）
 9. 其他各种辅助工具
 
 ### 核心设计
